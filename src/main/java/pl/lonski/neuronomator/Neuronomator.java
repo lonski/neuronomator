@@ -17,8 +17,20 @@ public class Neuronomator {
 				.setToleratedError(0.001)
 				.setActivationFn(LOGISTIC);
 
+		printLine("Learning");
 		NeuralNetwork nn = new NeuralNetwork(params);
-
 		nn.learn(1000000);
+
+		printLine("Calculated weights");
+		System.out.println(nn.printWeights());
+	}
+
+	private static void printLine(String msg) {
+		msg = "[" + msg.replaceAll(" ", "~") + "]";
+		String line = String.format("-----%-80s%n", msg)
+				.replaceAll(" ", "-")
+				.replaceAll("~", " ");
+		System.out.print(line);
+
 	}
 }

@@ -1,9 +1,9 @@
 package pl.lonski.neuronomator.network;
 
+import static java.lang.String.format;
+
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.function.DoubleUnaryOperator;
 import java.util.stream.Stream;
 
@@ -24,6 +24,49 @@ public class NeuralNetwork {
 		this.layers = new ArrayList<>();
 		this.synapses = new ArrayList<>();
 		createLayers(params);
+	}
+
+	public void learn(int iterationCount) {
+		for (int i = 0; i < iterationCount; ++i) {
+			calculateNeuronValues();
+			calculateError();
+			System.out.print(format("\rIteration %d/%d : error = %f", i + 1, iterationCount, totalError));
+			if (totalError < toleratedError) {
+				System.out.print(format("\nTotal error within limit: %f < %f", totalError, toleratedError));
+				break;
+			}
+			recalculateOutputLayerWeights();
+			recalculateHiddenLayerWeights();
+			applyNewWeights();
+		}
+		System.out.println();
+	}
+
+	public double getTotalError() {
+		return totalError;
+	}
+
+	public int getLayersCount() {
+		return layers.size();
+	}
+
+	public String printWeights() {
+		StringBuilder sb = new StringBuilder();
+		Formatter formatter = new Formatter(sb);
+		for (int lIdx = 0; lIdx < layers.size() - 1; lIdx++) {
+			Layer leftLayer = layers.get(lIdx);
+			formatter.format("L%d-L%d%n", lIdx + 1, lIdx + 2);
+			for (int nIdx = 0; nIdx < leftLayer.getNeurons().size(); nIdx++) {
+				Neuron left = leftLayer.getNeuron(nIdx);
+				formatter.format("\tN%d: ", nIdx + 1);
+				Layer rightLayer = layers.get(lIdx + 1);
+				for (Neuron right : rightLayer.getNeurons()) {
+					formatter.format("%18.15f ", getSynapseWeight(left, right));
+				}
+				formatter.format("%n");
+			}
+		}
+		return sb.toString();
 	}
 
 	private void createLayers(NeuralNetworkParameters params) {
@@ -50,30 +93,6 @@ public class NeuralNetwork {
 				synapses.add(new Synapse(left, right, random.nextDouble()));
 			}
 		}
-	}
-
-	public double getTotalError() {
-		return totalError;
-	}
-
-	public int getLayersCount() {
-		return layers.size();
-	}
-
-	public void learn(int iterationCount) {
-		for (int i = 0; i < iterationCount; ++i) {
-			calculateNeuronValues();
-			calculateError();
-			System.out.print(String.format("\rIteration %d/%d : error = %f", i + 1, iterationCount, totalError));
-			if (totalError < toleratedError) {
-				System.out.println(String.format("Total error within limit: %f < %f", totalError, toleratedError));
-				break;
-			}
-			recalculateOutputLayerWeights();
-			recalculateHiddenLayerWeights();
-			applyNewWeights();
-		}
-		System.out.println();
 	}
 
 	private void calculateNeuronValues() {
