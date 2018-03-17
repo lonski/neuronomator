@@ -1,6 +1,23 @@
 # Neuronomator
+
 Neural network backpropagation alghoritm implementation. 
+
+## Building
+
+Enter source root and build jar
+```
+./gradlew jar
+```
+
+Then run
+```
+java -jar build/libs/neuronomator-v*.jar
+```
+
+Where '*' is current version number.
+
 ## Example output
+
 ```
 :: Neuronomator 6000 ::
 
