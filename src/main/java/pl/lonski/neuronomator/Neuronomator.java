@@ -10,31 +10,41 @@ import java.util.Scanner;
 
 import pl.lonski.neuronomator.network.NeuralNetwork;
 import pl.lonski.neuronomator.network.NeuralNetworkParameters;
+import pl.lonski.neuronomator.network.TopologyPrinter;
 
 public class Neuronomator {
 
 	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		NeuralNetworkParameters params = new NeuralNetworkParameters();
+		boolean isAccepted = false;
+
 		System.out.println(":: Neuronomator 6000 ::");
 		System.out.println();
-		printSeparator("Menu");
-		System.out.println("1. Enter network parameters");
-		System.out.println("2. Use example parameter set");
-		System.out.println("0. Exit");
-		System.out.print(">");
 
-		Scanner scanner = new Scanner(System.in);
-		int choose = scanner.nextInt();
+		while (!isAccepted) {
+			printSeparator("Menu");
+			System.out.println("1. Enter network parameters");
+			System.out.println("2. Use example parameter set");
+			System.out.println("0. Exit");
+			System.out.print(">");
 
-		NeuralNetworkParameters params = new NeuralNetworkParameters();
-		switch (choose) {
-		case 1:
-			params = promptUserForParams(scanner);
-			break;
-		case 2:
-			params = getExampleParams();
-			break;
-		default:
-			System.exit(0);
+			switch (scanner.nextInt()) {
+			case 1:
+				params = promptUserForParams(scanner);
+				break;
+			case 2:
+				params = getExampleParams();
+				break;
+			default:
+				System.exit(0);
+			}
+
+			System.out.println(new TopologyPrinter().print(params));
+
+			System.out.print("Ok? [y/n]>");
+			scanner.nextLine();
+			isAccepted = scanner.nextLine().equals("y");
 		}
 
 		System.out.print("Enter maximum number of iterations\n>");
