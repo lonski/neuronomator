@@ -18,4 +18,9 @@ jar {
 		attributes 'Main-Class': 'pl.lonski.neuronomator.Neuronomator'
 	}
 	baseName = 'neuronomator'
+	version = 'v0.' + determineCommitCount()
+}
+
+private static String determineCommitCount() {
+	'git rev-list --count HEAD'.execute().text.trim()
 }
